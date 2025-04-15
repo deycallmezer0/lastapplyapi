@@ -10,8 +10,7 @@ class Job(BaseModel):
     location: str
     requirements: str
 
-
-async def extract_job_info(url):
+def extract_job_info(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     job_info = {}
@@ -38,6 +37,7 @@ async def extract_job_info(url):
     requirements_elements = soup.find_all(
         class_="show-more-less-html__markup show-more-less-html__markup--clamp-after-5 relative overflow-hidden"
     )
+
     job_info["requirements"] = (
         " ".join([req.text.strip() for req in requirements_elements])
         if requirements_elements
@@ -45,8 +45,3 @@ async def extract_job_info(url):
     )
 
     return job_info
-
-
-result = extract_job_info("https://www.linkedin.com/jobs/view/4199739366")
-
-print(result)

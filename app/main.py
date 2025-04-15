@@ -1,17 +1,20 @@
 from fastapi import FastAPI
-from functions.helpers import extract_job_info
+from app.api import jobs
+from app.core.database import engine
+from app.models import job
 
-app = FastAPI()
+# Create the database tables
+job.Base.metadata.create_all(bind=engine)
 
+app = FastAPI(
+    title="Job Tracker API",
+    description="API for tracking job applications",
+    version="0.1.0"
+)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+# Include routers
+app.include_router(jobs.router)
 
-
-
-if __name__ == "__main__":
-    host = "0.0.0.0"
-    port = 8000
-    import uvicorn
-    uvicorn.run(app, host=host, port=port)
+@app.get("/", tags=["root"])
+def read_root():
+    return {"message": "Welcome to the Job Tracker API"}
